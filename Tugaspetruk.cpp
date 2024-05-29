@@ -1,55 +1,32 @@
-#include <iostream>
-#include <vector>
-#include <stack>
-#include <string>
+vector<string>splitinfinixExpression(cons string&infinix) {
+    vector<string>token ;
+    string number = "";
+    size_t length = infinix.length();
+    bool previousWasOperator = true;
 
-using namespace std;
-
-bool isOperator(char c){
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
-}
-
-int precedence(char op){
-    switch (op)
-    {
-    case '+':
-    case '-':
-        return 1;
-    case '*':
-    case '/':
-    case '%':
-        return 2;
-    default:
-        return 0;
-    }
-}
-
-vector<string> infixToPostfix(const vector<string>& tokens) {
-    vector<string> output;
-    stack<string> operators;
-
-    for (const auto& token : tokens) {
-        if (isdigit(token[0]) || (token[0] == '-' && token.size() > 1)) {
-            output.push_back(token);
-        } else if (token == "(") {
-            operators.push(token);
-        } else if (token == ")") {
-            while (!operators.empty() && operators.top() != "(") {
-                output.push_back(operators.top());
-                operators.pop();
+    for (size_t i = 0; i < length; i++) {
+        if (isdigit(infinix[i]) || (infinix[i] == "-" && (previousWasOperator || i == 0))) {
+            number += infinix[i];
+            previousWasOperator = false;
+        }
+        else {
+            if (!number.empty()) {
+                token.push_back(number);
+                number.clear();
             }
-            operators.pop(); // Remove '('
-        } else if (isOperator(token[0])) {
-            while (!operators.empty() && precedence(operators.top()[0]) >= precedence(token[0])) {
-                output.push_back(operators.top());
-                operators.pop();
+            if (infinix[i] == " ") {
+                continue;
             }
-            operators.push(token);
+            else if (isOperator(infinix[i]) || infinix[i] == '(' || infinix[i] == ')') {
+                token.push_back(string(1,infinix[i]));
+                previousWasOperator = true;
         }
     }
+}
 
-    while(!operators.empty()){
-        output.push_back(operators.top());
-        operators.pop();
-    }
+if(!number.empty()) {
+    token.push_back(number);
+}
+
+return tokens;
 }
